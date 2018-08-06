@@ -2,7 +2,8 @@
 #include <iostream>
 
 using namespace sf;
-RenderWindow window(VideoMode(600, 600), "Snake");
+
+
 
 class Snake
 {
@@ -19,16 +20,23 @@ class Snake
 		}
 	}
 };
+
+int size = 600;
 int frame;
 int gridSize;
 char loopAround;
 char leader;
 bool enteredFramerate = false;
+
+RenderWindow window(VideoMode(size, size), "Snake");
+
 int main()
 {
+
 	bool startup = true;
+
 	Event event0;
-	int s = 600;
+
 	if (enteredFramerate == false)
 	{
 		std::cout << "Enter Grid Size: ";
@@ -44,7 +52,9 @@ int main()
 		leader = leader % 2;
 		enteredFramerate = true;
 	}
-	std::cout << "Press Enter to Continue" << std::endl;
+
+	std::cout << "Press Enter to Continue or Press R to enter Settings again" << std::endl;
+
 	while (startup == true)
 	{
 		while (window.pollEvent(event0)) {
@@ -57,53 +67,73 @@ int main()
 			{
 				startup = false;
 			}
+			else if(event0.type == Event::KeyPressed && event0.key.code == Keyboard::R)
+			{
+				enteredFramerate = false;
+				main();
+			}
 		}
 	}
-	int r = s / gridSize;
-	int r2 = s / 2;
+
+	int r = size / gridSize;
+	int r2 = size / 2;
 	int r3;
+
 	if (gridSize <= 15)
+	{
+		r3 = 5;
+	}
+
+	else if (gridSize <= 20)
 	{
 		r3 = 4;
 	}
-	else if (gridSize <= 20)
+
+	else if (gridSize < 30)
 	{
 		r3 = 3;
 	}
-	else if (gridSize < 30)
+
+	else
 	{
 		r3 = 2;
 	}
-	else
-	{
-		r3 = 1;
-	}
+
 	short x = gridSize / 2;
 	short y = gridSize / 2;
 	short lastx;
 	short lasty;
 	short last2x;
 	short last2y;
-	Snake parts[gridSize * gridSize];
+
+	short length = -1;
+
+	char facing = 1;
+	
+	unsigned short foodx;
+	unsigned short foody;
+
 	bool doneOnce = false;
-	RectangleShape partRend[gridSize * gridSize];
 	bool hasEaten = false;
+
+	Snake parts[gridSize * gridSize];
+	
+	RectangleShape partRend[gridSize * gridSize];
 	RectangleShape Character;
-	Character.setSize(Vector2f(r - 2, r - 2));
+
+	Character.setSize(Vector2f(r - r3, r - r3));
+
 	if (leader == 1)
 	{
 		Character.setFillColor(Color(0, 255, 128, 255));
 	}
+
 	else {
 		Character.setFillColor(Color::Green);
 	}
 	
 	Character.setPosition(r2, r2);
 	window.setFramerateLimit(frame);
-	char facing = 1;
-	unsigned short foodx;
-	unsigned short foody;
-	short length = -1;
 	foodx = rand() % gridSize;
 	foody = rand() % gridSize;
 	RectangleShape Food;
@@ -125,8 +155,8 @@ int main()
 			int l2 = l * r;
 			RectangleShape lineh;
 			RectangleShape linev;
-			lineh.setSize(Vector2f(s, 1));
-			linev.setSize(Vector2f(1, s));
+			lineh.setSize(Vector2f(size, 1));
+			linev.setSize(Vector2f(1, size));
 			lineh.setFillColor(Color(128, 128, 128, 255));
 			linev.setFillColor(Color(128, 128, 128, 255));
 			lineh.setPosition(0, l2);
@@ -291,7 +321,7 @@ int main()
 			parts[length].x = last2x;
 			parts[length].y = last2y;
 			parts[length].dead = false;
-			partRend[length].setSize(Vector2f(r - 2, r - 2));
+			partRend[length].setSize(Vector2f(r - r3, r - r3));
 			partRend[length].setFillColor(Color::Green);
 			partRend[length].setPosition((parts[length].x * r) + 1, (parts[length].y * r) + 1);
 			hasEaten = true;
@@ -300,6 +330,7 @@ int main()
 		{
 			if (event.type == Event::Closed) {
 				window.close();
+				return 0;
 			}
 			if (event.type == Event::KeyPressed && event.key.code == Keyboard::W && facing != 2 && facing != 0)
 			{
